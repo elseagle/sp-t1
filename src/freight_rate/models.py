@@ -118,16 +118,37 @@ def make_lightgbm(**overrides) -> TransformedTargetRegressor:
     return _log_target(Pipeline(steps))
 
 
+class LogBlend(BaseEstimator, RegressorMixin):
+    """Weighted geometric mean of member predictions, equivalent to averaging in log space."""
+
+    def __init__(self, members: list[tuple[str, BaseEstimator, float]]):
+        self.members = members
+
+    def fit(self, X: pd.DataFrame, y: np.ndarray) -> "LogBlend":
+        self.fitted_ = [(name, estimator.fit(X, y), weight) for name, estimator, weight in self.members]
+        return self
+
+    def predict(self, X: pd.DataFrame) -> np.ndarray:
+        total_weight = sum(weight for _, _, weight in self.fitted_)
+        log_prediction = sum(weight * np.log(estimator.predict(X)) for _, estimator, weight in self.fitted_)
+        return np.exp(log_prediction / total_weight)
+
+
+def make_blend() -> LogBlend:
+    return LogBlend([("ridge", make_ridge(), 0.5), ("lightgbm", make_lightgbm(), 0.5)])
+
+
 MODEL_BUILDERS: dict[str, Callable[[], BaseEstimator]] = {
     "lane_median": make_lane_median,
     "ridge": make_ridge,
     "elastic_net": make_elastic_net,
     "hist_gb": make_hist_gb,
     "lightgbm": make_lightgbm,
+    "blend": make_blend,
 }
 
 SIMPLE_MODELS = ("lane_median", "ridge", "elastic_net")
-BOOSTED_MODELS = ("hist_gb", "lightgbm")
+BOOSTED_MODELS = ("hist_gb", "lightgbm", "blend")
 
 
 def make_model(name: str) -> BaseEstimator:

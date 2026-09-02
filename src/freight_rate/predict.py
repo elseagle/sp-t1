@@ -71,7 +71,7 @@ def predict_december(bundle: dict, december: pd.DataFrame, train: pd.DataFrame, 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate validation and fixed-lane December predictions from a saved model.")
-    parser.add_argument("--model", default="ridge", help="name of the saved model bundle in models/")
+    parser.add_argument("--model", default="blend", help="name of the saved model bundle in models/")
     parser.add_argument("--output", type=Path, default=PREDICTIONS_PATH)
     parser.add_argument("--december-output", type=Path, default=DECEMBER_PATH)
     args = parser.parse_args()

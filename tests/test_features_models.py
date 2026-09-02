@@ -51,7 +51,7 @@ def test_every_model_fits_and_predicts_positive_rates():
     frame = Cleaner().fit_transform(_frame(120))
     X = build_features(frame)
     y = frame["posted_rate"].to_numpy()
-    for name in ("lane_median", "ridge", "elastic_net", "hist_gb", "lightgbm"):
+    for name in ("lane_median", "ridge", "elastic_net", "hist_gb", "lightgbm", "blend"):
         model = make_model(name).fit(X, y)
         pred = model.predict(X.assign(pickup=np.where(X.index < 5, "NewCity", X["pickup"])))
         assert pred.shape == (len(X),)
