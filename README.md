@@ -4,7 +4,7 @@ Predicts the posted rate for truckload freight from lane, equipment, weight, dat
 
 ## Results
 
-Validation is time-ordered: fit on January to August, score on September to October, a two-month forward window matching the prediction task. Metrics are in dollars on the raw rate; `clean` excludes the 1.4% of loads whose recorded rate is corrupted, `all` includes them.
+Validation is time-ordered: fit on January to August, score on September to October, a two-month forward window matching the prediction task. MAE is mean absolute error in dollars on the raw rate; MAPE is mean absolute percentage error, the same miss expressed as a percentage of the true rate. `clean` excludes the 1.4% of loads whose recorded rate is corrupted, `all` includes them.
 
 | Model | MAE (clean) | MAPE (clean) | MAE (all) | MAPE (all) | Fold-mean MAPE |
 |---|---:|---:|---:|---:|---:|
